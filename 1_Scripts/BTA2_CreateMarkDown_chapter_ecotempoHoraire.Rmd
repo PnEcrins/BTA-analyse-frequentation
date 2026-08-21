@@ -1,0 +1,7 @@
+
+Les données des éco-compteurs permettent une étude heure par heure des données de passage. Le graphique ci-dessous présente le nombre de passages en moyenne par heure et par mois pour chaque éco-compteur (plus les points sont gros et foncés, plus le nombre de passages est élevé).
+```{r, out.width='100%', fig.height=6, fig.width=8}
+plot(Res_ecocompteurs_temporel$G_Heure)
+```
+
+<br>

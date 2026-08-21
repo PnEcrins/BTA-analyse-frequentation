@@ -1,0 +1,1 @@
+- **Eco-compteurs :** les données des `r nrow(ecocompteursSF)` éco-compteurs fournies par `r paste0(ifelse(GENRE=="M", "le ", "la "), Parc_NomComplet)`. Vous pouvez cliquer sur les compteurs pour voir les périodes de fonctionnement et les données résumées par quinzaines.

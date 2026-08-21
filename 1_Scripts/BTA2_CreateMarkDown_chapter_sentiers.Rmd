@@ -1,0 +1,19 @@
+## Par sentier
+
+La fréquentation a été également calculée par sentier de randonnée. Un score a été calculé pour chaque sentier de randonnée, basé sur les mêmes poids des différents jeux de données que la fréquentation standarisée par raster. Ces scores de fréquentation ont ensuite été standardisés pour exprimer des pourcentages relatifs (voir la section 'Méthodologie détaillée') et représentés sur la carte et dans le tableau ci-dessous.
+
+```{r, out.width='100%'}
+plot(G_FreqSentiers)
+
+Table_to_plot <- Res_FreqSentiers %>% as.data.frame(.) %>% .[,c("Nom_chemin", "Freq_std")] %>% mutate(Freq_std=round(Freq_std,1))
+Table_to_plot <- Table_to_plot[order(Table_to_plot$Freq_std, decreasing=T),]
+Table_to_plot$Classement <- paste0(1:nrow(Table_to_plot), "/", nrow(Table_to_plot))
+if(COUNTRY=="IT"){Table_to_plot <- Table_to_plot %>% rename(Nome_sentiero=Nom_chemin, Frequentazione=Freq_std, Classifica=Classement)} else {Table_to_plot <- Table_to_plot %>% rename(Nom_sentier=Nom_chemin, Frequentation=Freq_std)}
+kable(Table_to_plot, format = "html", row.names=F) %>%
+  kable_styling("striped", full_width = T, fixed_thead = T) %>% 
+  scroll_box(width = "100%", height = "300px")
+```
+
+<br>
+
+

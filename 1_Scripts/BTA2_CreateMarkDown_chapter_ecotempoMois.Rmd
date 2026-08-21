@@ -1,0 +1,10 @@
+## Répartition temporelle des données éco-compteurs
+
+Le graphique ci-dessous montre l'évolution du passage au cours de la saison pour chaque éco-compteur. L'axe des ordonnées montre le nombre de passages journaliers moyens (en calculant une moyenne sur les différentes années pour lesquelles nous avons des données, et sur les différents jours de la semaine). Ce graphique permet de visualiser les tendances saisonnières, ou dans certains cas les erreurs de date dans les données éco-compteurs. Attention, pour faciliter la lecture l'axe vertical est en échelle logarithmique ! 
+```{r, out.width='100%'}
+plot(Res_ecocompteurs_temporel$G_Saison)
+```
+
+<br>
+
+

@@ -1,0 +1,311 @@
+---
+title: "`r paste0('Analyse fréquentation - BiodivTourAlps<br>', Parc_NomComplet)`"
+author: "Victor Cazalis <a href='https://conservara.fr/'>(Conservara)</a>"
+date: "`r format(Sys.Date(), '%d/%m/%Y')`"
+output:
+  rmdformats::readthedown:
+    self_contained: true
+    thumbnails: false
+    lightbox: false
+    gallery: false
+    highlight: tango      
+---
+
+<style>
+p {
+    font-size: 16px;
+    line-height: 24px;
+    margin: 0px 0px 12px 0px;
+}
+
+h1, h2, h3, h4, h5, h6, legend {
+    font-weight: 700;
+    color: #98c938ff;
+}
+
+h1 {
+    text-align:center;
+}
+
+#sidebar h2 {
+    background-color: #98c938ff;
+}
+
+
+#sidebar {
+  background-image: url(`r paste0("logos/logo_", PARC_i, "53.png")`);
+  background-repeat: no-repeat;
+  background-position: center 85%;
+  margin-bottom: 10em;
+}
+
+</style>
+
+
+
+<font size="4">
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+
+# Assigner le poids correspondant au pays
+if(COUNTRY=="FR"){Res_PoidsRaster$Poids <- Res_PoidsRaster$Poids_FR}
+if(COUNTRY=="IT"){Res_PoidsRaster$Poids <- Res_PoidsRaster$Poids_IT}
+DT::datatable(data.frame(A=1, B=2)) # Super bizarre mais il faut que j'appelle une DT avant de faire la leaflet sinon la DT suivante (dans comparaison) n'est pas creee
+```
+
+<br><div style="height: 4px; background:#98c938ff"></div><br>
+
+
+# Introduction
+Depuis le début des années 2020, les espaces protégés alpins voient leur fréquentation évoluer rapidement, attirant de nouveaux publics, de nouvelles pratiques et de nouveaux sites emblématiques. Pourtant, cette transformation reste souvent mal documentée et peu objectivée par des données précises.
+
+Cette analyse a pour objectif de produire pour les espaces protégés transfrontaliers entre la France et l’Italie une cartographie standardisée de leur fréquentation, élaborée à partir de données existantes (Eco-compteurs, Strava, Outdoorvision, iNaturalist), pondérées et corrélées entre elles. Elle permet de cartographier la fréquentation interne des différents espaces protégés par maille de 500m et également en fonction des sentiers de randonnée de chaque espace protégé. La fréquentation des différents espaces protégés peut ensuite être comparée dans leur intensité et distribution. Enfin, certaines données permettent de caractériser temporellement la fréquentation pour identifier les pics saisonniers et journaliers de fréquentation.
+
+L’ensemble des résultats présentés ici offre aux gestionnaires des espaces protégés et aux décideurs publics des données consolidées et objectives, afin d’éclairer les choix de gestion et de préservation. Cette analyse intègre 8 parcs français (Parc national des Ecrins, Parc national du Mercantour, Parc national de la Vanoise, Réserves naturelles de Haute-Savoie, Parc naturel régional du Vercors, Parc naturel régional de la Chartreuse, Parc naturel régional des Bauges, Parc naturel régional du Queyras) et 4 parcs italiens (Parco nazionale del Gran Paradiso, Parco naturale delle Alpi Marittime, Aree protette delle Alpi Cozie, Aree Protette  dell'Ossola). Le Parc naturel Mont-Avic et le Parc naturel régional d’Alpi Liguri n’ont pas été inclus dans l’analyse car leurs données Strava n’ont pas pu être récupérées à temps.
+
+Cette étude est réalisée dans le cadre du projet BiodivTourAlps n°20140 – ALCOTRA, cofinancée par l’Union Européenne au titre du Fonds Européen de Développement Régional (FEDER), et de son programme de coopération transfrontalier Interreg VI-A Italie- France ALCOTRA 2021-2027.
+
+
+## Description de l'espace protégé
+`r Interpretation_parc$Description`
+
+
+<br><div style="height: 4px; background:#98c938ff"></div><br>
+
+# Présentation des données
+La carte interactive ci-dessous présente les données utilisées pour `r paste0(ifelse(GENRE=="M", "le ", "la "), Parc_NomComplet)` :
+
+`r if(is.null(nrow(ecocompteursSF))==F){tryCatch({knitr::knit_child("BTA2_CreateMarkDown_chapter_ecoPres.rmd")}, error=function(e){"!! Error in ecoPres !!"})}`
+- **Sentiers :** les sentiers de l'espace fournis par `r paste0(ifelse(GENRE=="M", "le ", "la "), Parc_NomComplet)`. Ils sont utilisés pour la cartographie de la fréquentation par sentier. Leur nom apparait en cliquant sur le sentier.
+- **Strava :** les données <a href='https://metro.strava.com/'>Strava</a> fournies par `r paste0(ifelse(GENRE=="M", "le ", "la "), Parc_NomComplet)`. Elles incluent les données pédestres de 2021 à 2025. Elles ont été transformées en raster de 500x500m suivant la méthode développée pour le Parc national des Ecrins (voir détails dans la section 'Méthodologie détaillée'); ce raster est visible sur la carte interactive.
+`r if(Run_Outdoor==T){tryCatch({knitr::knit_child("BTA2_CreateMarkDown_chapter_outdoorPres.rmd")}, error=function(e){"!! Error in OutdoorPres !!"})}`
+- **iNaturalist :** les données <a href='https://www.inaturalist.org/home'>iNaturalist</a> utilisées pour étudier la fréquentation par un public naturaliste généraliste. Elles ont été téléchargées automatiquement le 11 juin 2026 et filtrées pour ne garder que les données de 2016 à 2025 : `r nrow(inat_data)` données ont été trouvées, correspondant à `r length(unique(paste0(inat_data$user_name, as.Date(inat_data$datetime))))` visites journalières (nombre de jours*observateurs) réalisées par `r length(unique(inat_data$user_name))` observateurs uniques. Les points sur la carte interactive correspondent aux données brutes iNaturalist, le raster bleu correspond au nombre de visites journalières dans chaque cellule de 500x500m.`r if(PARC_i=="Mont-Avic"){"Les données des agents du parc ont été écartées de l'analyse car non représentatives de la fréquentation: giannabosio, robertofacchini, federicafoghino, annafoieri, giadacignetti, alessandrodurando1, pietro_ruggeri, pietroruggeri, alainlaniece, danielebaroni, andreamainetti, andrebatt, sofiakoliopoulus, sarah_bitsch, marques_f."}` `r if(PARC_i=="Alpi_Cozie"){"Les données des agents du parc ayant saisi beaucoup d'observations (>100 jours.cellule) ont été écartées de l'analyse car elles ne sont pas représentatives de la fréquentation du parc: davidegiuliano, luca_maurino, barbara_rizzioli, elisa_ramassa, gianfra61"}`
+
+
+
+`r CarteInter`
+
+<i>Les rasters de Strava, Outdoorvision et iNaturalist présentés sur la carte interactive ont été transformé pour la représentation graphique, en rabattant les valeurs les plus hautes (au-delà du quantile à 99%) à la valeur du quantile à 99%.</i>
+
+<br><br><div style="height: 4px; background:#98c938ff"></div><br>
+
+# Fréquentation de l'espace protégé
+
+## Par raster
+
+Pour cartographier la fréquentation dans `r paste0(ifelse(GENRE=="M", "le ", "la "), Parc_NomComplet)`, les données Strava`r ifelse("outdoor" %in% names(Res_PoidsRaster$Poids), ", Outdoorvision", "")` et iNaturalist ont été transformées en rasters de 500x500m. Elles ont été comparées aux données éco-compteurs (de tous les parcs du pays inclus dans cette analyse) pour savoir quel jeu de données est le plus représentatif de la fréquentation de l'espace protégé. Les corrélations entre les données éco-compteurs et les données externes sont données et représentées dans le graphique ci-dessous.
+
+```{r, out.width='100%'}
+if(COUNTRY=="FR"){plot(Res_PoidsRaster$G_corr_FR)} else {plot(Res_PoidsRaster$G_corr_IT)}
+```
+
+ Cette comparaison a mené à la répartition des poids suivante entre les différents jeux de données (voir détails dans la section 'Méthodologie générale') : 
+`r paste0("iNaturalist (", Res_PoidsRaster$Poids["inat"], "%), Strava (", Res_PoidsRaster$Poids["strava"], "%)", ifelse(COUNTRY=="FR", paste0(", Outdoorvision (", Res_PoidsRaster$Poids["outdoor"], "%)"), ""))`
+
+
+La figure ci-dessous présente la cartographie de fréquentation standardisée (en haut) ainsi que la répartition des données Strava`r ifelse("outdoor" %in% names(Res_PoidsRaster$Poids), ", Outdoorvision", "")` et iNaturalist (en bas; pour faciliter la lecture les valeurs ont été rabotées au quantile à 99% et standardisées entre 0 et 100).
+```{r, out.width='100%'}
+plot(G_Freq)
+```
+
+```{r, out.width='100%'}
+plot(G_rasters)
+```
+
+<br> 
+
+`r if(Run_Sentiers==T){tryCatch({knitr::knit_child("BTA2_CreateMarkDown_chapter_sentiers.rmd")}, error=function(e){"!! Error in SENTIERS !!"})}`
+
+## Interprétation
+`r Interpretation_parc$Frequentation`
+
+
+
+
+<br><div style="height: 4px; background:#98c938ff"></div><br>
+
+# Dynamique temporelle
+
+`r if(Run_EcoTempo==T){tryCatch({knitr::knit_child("BTA2_CreateMarkDown_chapter_ecotempoMois.rmd")}, error=function(e){"!! Error in EcoTempo !!"})}`
+`r if(Run_EcoTempo==T & is.null(Res_ecocompteurs_temporel$G_Heure)==F){tryCatch({knitr::knit_child("BTA2_CreateMarkDown_chapter_ecotempoHoraire.rmd")}, error=function(e){"!! Error in EcoTempo !!"})}`
+
+<br>
+
+## Répartition saisonnière des données iNaturalist
+La répartition temporelle des observations iNaturalist dans l'espace protégé a été étudiée. Pour cela, le nombre quotidien d'observateurs iNaturalist a été calculé entre 2021 et 2025 et la dynamique saisonnière du nombre quotidien d'observateurs a été isolée. Cet effet saisonnier montre la variation de la présence d'observateurs dans l'espace protégé au cours des mois. Il est important de noter que les observations iNaturalist sont plus fréquentes en été qu'en hiver dû à la rareté des plantes et animaux en hiver dans les territoires de montagne, ce qui peut augmenter artificiellement l'effet saisonnier, mais qu'ici nous nous intéressons au nombre d'observateurs qui est moins sensible à ce biais.
+
+
+L'effet saisonnier permet d'identifier les jours de l'année où la fréquentation est la plus forte. Il apparait que les 5% de jours les plus fréquentés (en rouge) se situent entre le `r Res_iNat_temporel$Pic[1]` et le `r Res_iNat_temporel$Pic[2]`.
+
+```{r, out.width='100%'}
+plot(Res_iNat_temporel$Plot_season)
+```
+
+
+
+
+
+<br>
+
+## Interprétation
+`r Interpretation_parc$Temporel`
+
+
+
+
+
+<br><div style="height: 4px; background:#98c938ff"></div><br>
+
+# Comparaison inter-régionale
+
+Il est délicat de comparer quantitativement la fréquentation des différents parcs considérés dans cette analyse car les données ne sont pas toujours les mêmes entre les parcs, et que les parcs diffèrent grandement par leur forme et leur contexte. Les données des éco-compteurs par exemple sont peu comparables, puisque les choix des lieux où ils sont déployés varient d'un parc à l'autre : un parc peut choisir de le mettre sur son sentier le plus fréquenté et proche du parking, un autre parc dans un secteur où la fréquentation est plus faible, cela ne veut pas nécessairement dire qu'il est moins fréquenté en général. De plus, plusieurs parcs n'ont pas d'éco-compteurs. 
+
+Pour comparer les données externes utilisées dans cette analyse (Strava, iNaturalist, ainsi qu'Outdoorvision pour les parcs français), il faut s'abstraire de l'effet des différentes tailles des parcs. Par exemple, ce sont les parcs des Ecrins et du Vercors qui ont vu passer le plus d'observateurs iNaturalist différents (respectivement 2146 et 2220, contre une moyenne de 1092 sur l'ensemble des parcs). Cela s'explique en grande partie par le fait qu'ils soient les deux plus grands parcs parmi les 12 parcs considérés dans cette analyse. Il faut donc utiliser des métriques qui ne soient pas biaisées par la taille des parcs. 
+
+Le plus direct est donc d'utiliser la valeur moyenne des rasters de 500x500m de Strava, Outdoorvision et iNaturalist, pour renseigner sur la fréquentation moyenne de chaque parc. Il peut également être intéressant de savoir si certains parcs, même s'ils sont en moyenne peu fréquentés, ont des fréquentations particulièrement élevées localement. Pour cela, la valeur maximale de chaque parc peut être utilisée, mais nous utiliserons ici plutôt le quantile à 95% (du raster Strava, du raster Outdoorvision, et du raster iNaturalist) qui sont moins sensibles aux variations stochastiques. 
+
+Le graphique ci-dessous présente donc pour chaque parc de l'analyse la valeur moyenne et le quantile à 95% des rasters Strava, Outdoorvision (pour les parcs français) et iNaturalist. L'unité des valeurs des rasters Strava et Outdoorvision est en nombre de kilomètres parcourus (une valeur de 100 peut ainsi indiquer que 100 personnes ont fait un trajet de 1km dans la cellule de 500x500m, ou que 1000 personnes ont fait un trajet de 100m). Les rasters iNaturalist comptent eux le nombre d'observateurs.jours sur l'ensemble de la période d'analyse pour chaque cellule de 500x500m (une valeur de 10 peut ainsi indiquer qu'un unique observateur est venu 10 jours dans cette cellule, ou que 10 observateurs sont venus chacun une journée).
+
+Le nombre de passages par jour entre juin et septembre moyenné sur les différentes années de comptage a également été calculé pour chaque éco-compteur. Le même calcul a été effectué sur les seuls mois de juillet et août, permettant de retenir un nombre moyen de passages sur chaque éco-compteur pour un jour d'été. Le graphique et tableau ci-dessous présente la moyenne de ce score pour chaque parc (c'est à dire le nombre de passages en moyenne un jour d'été sur un des éco-compteurs du parc) ainsi que la valeur maximale (c'est à dire le nombre de passage en moyenne un d'été sur l'éco-compteur le plus fréquenté du parc). Ces valeurs doivent être considérées avec précautions pour les raisons expliquées dans le premier paragraphe de cette section.
+
+
+```{r, out.width='100%', fig.width=13, fig.height=29}
+if(COUNTRY=="FR"){
+  grid.arrange(
+  BTA_CarteComparaison(Comparison_results, "strava_meanCell", COUNTRY),
+  BTA_CarteComparaison(Comparison_results, "strava_Q95Cell", COUNTRY),
+  BTA_CarteComparaison(Comparison_results, "outdoor_meanCell", COUNTRY),
+  BTA_CarteComparaison(Comparison_results, "outdoor_Q95Cell", COUNTRY),
+  BTA_CarteComparaison(Comparison_results, "iNat_meanCell", COUNTRY),
+  BTA_CarteComparaison(Comparison_results, "iNat_Q95Cell", COUNTRY),
+  BTA_CarteComparaison(Comparison_results, "eco_MeanEstival", COUNTRY),
+  BTA_CarteComparaison(Comparison_results, "eco_MaxEstival", COUNTRY),
+  BTA_CarteComparaison(Comparison_results, "eco_MeanJA", COUNTRY),
+  BTA_CarteComparaison(Comparison_results, "eco_MaxJA", COUNTRY),
+  ncol=2)
+} else {
+  grid.arrange(
+  BTA_CarteComparaison(Comparison_results, "strava_meanCell", COUNTRY),
+  BTA_CarteComparaison(Comparison_results, "strava_Q95Cell", COUNTRY),
+  BTA_CarteComparaison(Comparison_results, "iNat_meanCell", COUNTRY),
+  BTA_CarteComparaison(Comparison_results, "iNat_Q95Cell", COUNTRY),
+  BTA_CarteComparaison(Comparison_results, "eco_MeanEstival", COUNTRY),
+  BTA_CarteComparaison(Comparison_results, "eco_MaxEstival", COUNTRY),
+  BTA_CarteComparaison(Comparison_results, "eco_MeanJA", COUNTRY),
+  BTA_CarteComparaison(Comparison_results, "eco_MaxJA", COUNTRY),
+  ncol=2)
+}
+
+```
+
+
+Ces résultats sont résumés dans le tableau ci-dessous, qui peut être classé par la colonne de votre choix en cliquant dessus.
+
+```{r, out.width='100%'}
+Tab_to_plot <- data.frame(
+  Parc=Comparison_results$Parc,
+  Strava_mean=Comparison_results$strava_meanCell %>% round(.,1),
+  Strava_Q95=Comparison_results$strava_Q95Cell %>% round(.,1),
+  Outdoor_mean=Comparison_results$outdoor_meanCell %>% round(.,1),
+  Outdoor_Q95=Comparison_results$outdoor_Q95Cell %>% round(.,1),
+  iNat_mean=Comparison_results$iNat_meanCell %>% round(.,1),
+  iNat_Q95=Comparison_results$iNat_Q95Cell %>% round(.,1),
+  compteurs_N=Comparison_results$eco_N %>% round(.,1),
+  compteurs_mean=Comparison_results$eco_MeanEstival %>% round(.,1),
+  compteurs_max=Comparison_results$eco_MaxEstival %>% round(.,1),
+  compteurs_mean_JA=Comparison_results$eco_MeanJA %>% round(.,1),
+  compteurs_max_JA=Comparison_results$eco_MaxJA %>% round(.,1)
+)
+
+Tooltips <- revalue(names(Tab_to_plot), c(
+    "Strava_mean"=ifelse(COUNTRY=="FR", "Strava (moyenne)", "Strava (media)"),
+    "Strava_Q95"="Strava (Q95%)",
+    "Outdoor_mean"=ifelse(COUNTRY=="FR", "Outdoorvision (moyenne)", "Outdoorvision (media); Solo Francia"),
+    "Outdoor_Q95"=ifelse(COUNTRY=="FR", "Outdoorvision (Q95%)", "Outdoorvision (Q95%); Solo Francia"),
+    "iNat_mean"=ifelse(COUNTRY=="FR", "iNaturalist (moyenne)", "iNaturalist (media)"),
+    "iNat_Q95"="iNaturalist (Q95%)",
+    "compteurs_N"=ifelse(COUNTRY=="FR", "Nombre d’eco-compteurs dans le parc", "Numero di contatori presenti nel parco"),
+    "compteurs_mean"=ifelse(COUNTRY=="FR", "Eco-compteur (nombre moyen de passages journaliers, moyenne des differents eco-compteurs) entre juin et septembre", "Contatore ecologico (numero medio di passaggi giornalieri, media dei vari contatori ecologici) tra giugno e settembre"),
+    "compteurs_max"=ifelse(COUNTRY=="FR", "Eco-compteur (nombre moyen de passages journaliers de l’eco-compteur avec le plus de passages) entre juin et septembre", "Contatore ecologico (numero medio di passaggi giornalieri dell’ecocontatore con il maggior numero di passaggi) tra giugno e settembre"),
+    "compteurs_mean_JA"=ifelse(COUNTRY=="FR", "Eco-compteur (nombre moyen de passages journaliers, moyenne des differents eco-compteurs) entre juillet et aout", "Contatore ecologico (numero medio di passaggi giornalieri, media dei vari contatori ecologici) tra luglio e agosto"),
+    "compteurs_max_JA"=ifelse(COUNTRY=="FR", "Eco-compteur (nombre moyen de passages journaliers de l’eco-compteur avec le plus de passages) entre juillet et aout", "Contatore ecologico (numero medio di passaggi giornalieri dell’ecocontatore con il maggior numero di passaggi) tra luglio e agosto")
+  ), warn_missing = F)
+
+TabDT <- DT::datatable(
+  Tab_to_plot,
+  rownames=F,
+  filter="none",
+  options=list(pageLength=nrow(Tab_to_plot), paging=F, searching=F, lengthChange = FALSE, info=FALSE),
+  callback = DT::JS(paste0("var tips = ['", paste0(Tooltips, collapse = "','"),"'], header = table.columns().header(); for (var i = 0; i < tips.length; i++) {$(header[i]).attr('title', tips[i]);}"))
+)
+
+TabDT
+
+```
+
+
+Le nombre moyen de passages par jour sur les éco-compteurs est également donné pour chacun des éco-compteurs utilisé dans cette étude dans le tableau ci-dessous. Vous pouvez classer le tableau par la colonne de votre choix en cliquant dessus, et également taper un mot clé dans la barre de recherche (par exemple PNVanoise pour ne voir que les éco-compteurs de la Vanoise) :
+```{r, out.width='100%'}
+eco_stock$compteur <- gsub("", "", eco_stock$compteur)
+DT::datatable(
+  eco_stock,
+  rownames=F,
+  options=list(pageLength=20),
+  callback = DT::JS(paste0("var tips = ['", paste0(c("Nom du parc", "Nom du compteur", "Nombre de passages par jour entre juin et septembre", "Nombre de passages par jour entre juillet et aout", "Nombre de passages maximum en une journée entre juin et septembre de 2021 à 2025", "Jour où le nombre de passages maximum a été observé"), collapse = "','"),"'], header = table.columns().header(); for (var i = 0; i < tips.length; i++) {$(header[i]).attr('title', tips[i]);}"))
+) %>%
+  DT::formatStyle(columns = c(1:ncol(eco_stock)), fontSize = '75%')
+
+```
+
+<br>
+
+## Interprétation
+La comparaison des données Strava et Outdoorvision semble indiquer que les parcs qui sont les plus fréquentés sont le Parc naturel régional de Chartreuse, le Parc naturel régional des Bauges, et les Réserves naturelles de Haute-Savoie ('RNAsters'), bien que les données Strava et Outdoorvision semblent se contredire pour ce dernier. D'après les données iNaturalist, ces trois parcs sont également parmi les plus fréquentés, mais sont devancés par le parc italien Alpi Cozie. Cela indique probablement un phénomène particulier des données iNaturalist localement (avec une forte abondance d'observateurs, ou quelques observateurs très actifs), plutôt qu'une réelle différence de fréquentation. Les autres parcs montrent des effets assez différents entre les sources de données (par exemple le PNR du Queyras a un score Outdoorvision environ deux fois plus élevé que le PN des Ecrins, mais ont un score Strava très similaire), il est donc difficile d'en tirer de grandes conclusions, mais vous pouvez explorer toutes ces comparaisons dans le premier tableau de cette section.
+
+Les éco-compteurs montrent un pattern différent, avec le Parc national du Mercantour qui présente en moyenne le plus haut passage estival (que ce soit sur la période juin à septembre, ou la période juillet et août). C'est ensuite dans le Parc national de la Vanoise, les réserves de Haute-Savoie ('RNAsters'), puis le Parc national des Ecrins que le passage moyen est le plus élevé. Bien que la moyenne des éco-compteurs soit plus importante dans le Mercantour, c'est dans le PNR de la Chartreuse que l'on trouve l'éco-compteur avec le plus de passage, avec le compteur Charmant_som qui voit passer en moyenne 1267 personnes par jour entre juin et septembre (1971 entre juillet et août), avec un maximum de 4420 passage le 07 septembre 2025 (voir le second tableau de cette section, que vous pouvez classer par la colonne de votre choix). Après la Chartreuse, les parcs avec les éco-compteurs comptant le plus de passages sont le Parc national des Ecrins (avec le Pré de Mme Carle), les réserves de Haute-Savoie (avec les éco-compteurs 'RNBDL_plage', 'RNAR_Lac_Blanc', 'RNBDL_Parking'), et le Parc national de la Vanoise (avec la réserve de Tueda). Il est important de noter que ce classement dépend grandement des choix de chaque espace protégé sur les localisations d'éco-compteurs; ils varient fortement selon qu'un parc choisisse de positionner ses compteurs proches des parkings ou plutôt en altitude. Il faut également noter que certains espaces protégés ne nous ont envoyé qu'une sélection d'éco-compteurs. Ainsi ces données sont à prendre avec des pincettes quand elles sont comparées entre parcs.
+
+Il est intéressant de noter que les cartes de moyennnes (gauche) et de quantile à 95% (droite) se ressemblent beaucoup. Cela signifie que les parcs qui ont en moyenne une forte fréquentation, sont également ceux qui ont localement la fréquentation la plus élevée, alors que l'on aurait pu attendre à ce que cela ne soit pas corrélé.
+
+Ces résultats sont à prendre avec précaution du fait de la forte variation de l'utilisation des applications Strava ou iNaturalist à travers le territoire. On voit par exemple que les 5 parcs italiens ont des scores plus faibles concernant Strava, ce qui peut être un signe que la fréquentation réelle y est inférieure, ou alors que Strava est moins utilisée que sur le territoire français. Cela se vérifie par le fait que pour un même nombre de passages sur les éco-compteurs, Strava détecte en moyenne deux fois moins de passages en Italie qu'en France, c'est signe que l'utilisation de cette application y est très différente (idem pour iNaturalist). Il est toutefois rassurant de voir sur le graphique des corrélations entre les données éco-compteurs et les données externes (voir section 'Par raster' de l'analyse de fréquentation standardisée) que les données ne semblent pas trop aggrégées par parc au sein d'un pays. En effet, si Strava était nettement plus utilisée dans certains parcs que dans d'autres, ces parcs devraient se détacher du nuage de points. Des analyses plus poussées, utilisant les données brutes de Strava et Outdoorvision (au-lieu des données de flux que nous utilisons ici) et une analyse plus poussée du lien entre les données externes et les données issues des éco-compteurs pourraient permettre de comparer plus précisément la fréquentation des différents parcs.
+
+
+
+<br><div style="height: 4px; background:#98c938ff"></div><br>
+
+# Méthodologie détaillée
+
+## Fréquentation de l'espace protégé
+
+### Par raster
+La cartographie standardisée de la fréquentation se base sur les jeux de données à notre disposition couvrant l’ensemble du territoire : Strava, iNaturalist (et Outdoorvision pour les espaces protégés français). Ces trois jeux de données, transformés en rasters de même résolution (500x500m), nous donnent une estimation de la fréquentation de l’ensemble de l’espace protégé. Pour Strava et Outdoorvision, les rasters ont été calculés en multipliant pour chaque tronçon le nombre de passages détectés par la longueur du tronçon en kilomètres (correspondant ainsi à un nombre de kilomètres parcourus), qui ont ensuite été ajoutés pour obtenir la somme de chaque cellule du raster. Le raster iNaturalist a été calculé en prenant pour chaque cellule le nombre moyens de visites journalières, c'est à dire le nombre d'observateurs uniques par jour dans une cellule.
+
+Ces différents jeux de données ne sont probablement pas tous aussi représentatifs de la vraie fréquentation du parc (on peut imaginer que les sentiers favorables à la course à pied sont sur-représentés dans les données Strava par rapport à la fréquentation réelle). Pour comparer ces jeux de données et savoir auxquels faire confiance pour cartographier la fréquentation générale de l’espace protégé, les éco-compteurs ont été utilisés. Pour chaque éco-compteur, le nombre moyen de passages par jour de suivi a été calculé, ainsi que la fréquentation d’après les données Strava, iNaturalist et Outdoorvision sur les sentiers sur lesquels sont placés les éco-compteurs (dans un rayon de 500m pour iNaturalist et un rayon de 100m pour Outdoorvision; plus de détails dans le rapport fourni au Parc national des Ecrins).
+
+Pour calculer un raster de fréquentation standardisée, un poids a été calculé pour chaque jeu de données avec la formule : 1/(1-CORR), où CORR est le coefficient de corrélation. Ces poids ont été calculés séparemment pour les espaces protégés français et italiens, en supposant que l'utilisation des différentes plateformes pouvait varier d'un pays à l'autre.
+
+Chaque raster a ensuite été normalisé (pour qu’ils soient à des échelles comparables), puis multiplié par son coefficient de corrélation respectif. Enfin, les 2% de valeurs les plus hautes ont été remplacées par la valeur du quantile à 2% afin de donner moins d’importance aux rares cellules très fréquentées, puis le raster a été normalisé pour que l’ensemble des valeurs s’étalent entre 0 et 100 et puissent être exprimées en pourcentages.
+
+
+### Par sentier
+Contrairement à l’approche par raster qui est basée sur des cellules de même taille (en omettant les cellules périphériques), une approche basée sur les sentiers de randonnée doit prendre en compte le fait que les sentiers ne font pas la même longueur. Pour Strava et Outdoorvision, la valeur utilisée pour le raster (nombre de passages multiplié par la longueur des tronçons) n’est plus pertinente puisqu’elle dépend directement de la longueur des sentiers. Les données Strava et Outdoorvision ont été croisées avec la cartographie des sentiers afin de calculer la fréquentation Strava et Outdoorvision de chaque sentier (avec la même méthode que pour le raster), puis ont été divisées par la longueur du sentier. Pour iNaturalist, le nombre d’observateurs dans un rayon de 100m autour des sentiers a été calculé. Ce nombre d’observateurs augmente nécessairement avec la longueur du sentier puisque la probabilité qu’un observateur fasse une observation augmente avec elle, mais de façon non linéaire. Les courbes de 'species area relationship', parfaitement indiquées pour corriger ce genre de biais, ont été appliquées grâce à la fonction sar_power du R package sars (Matthews et al. 2019). Les résidus de ce modèle ont ensuite été extraits et utilisés comme score iNaturalist de chaque sentier. 
+
+Comme pour le raster, les valeurs Strava, iNaturalist et Outdoorvision de chaque sentier ont été normalisées, puis multipliées par leur coefficient de pondération, sommées, et normalisées entre 0 et 100.
+
+
+## Dynamique temporelle
+### Répartition saisonnière des données iNaturalist
+Les données iNaturalist utilisées précédemment ont également été utilisées pour étudier la dynamique saisonnière de la fréquentation sur l'ensemble de l'espace protégé. Pour cela, le nombre d'observateurs uniques sur l'ensemble de l'espace protégé à été calculé pour chaque jour. La saisonnalité des observations a ensuite été calculée en calculant le nombre moyen d'observateurs par jour à travers les années de 2021 à 2025 (par exemple en calculant le nombre moyen d'observateurs qui passent un 1er janvier).
+
+Le nombre d’observateurs journaliers estimé par cette analyse de saisonnalité a ensuite été découpé en trois périodes. Le pic de fréquentation correspond à la période englobant tous les jours au-dessus du quantile à 95% de fréquentation (c’est-à-dire que cette période inclura les 5% des journées les plus fréquentées). A l'inverse les jours de basse fréquentation englobent les 50% de jours les moins fréquentés.
+
+Il est à noter que les données iNaturalist présentent un biais important qui est la saisonnalité des organismes observés par les naturalistes. En effet, à fréquentation égale, une journée d’été verra plus d’observations iNaturalist renseignées puisque le nombre de plantes ou animaux disponibles pour l’observation est bien plus important. Il est donc possible qu’une partie de la saisonnalité observée dans le graphique soit due à une plus grande difficulté à faire des observations naturalistes. Cependant, cet effet est largement atténué par le fait que nous nous intéressons ici au nombre d’observateurs et pas au nombre d’observations. Il suffit donc qu’un observateur note au moins une observation dans le parc un jour donné pour être compté, ce qui arrive fréquemment même en hiver.
+
+
+### Répartition journalière des données éco-compteurs
+Les données d'éco-compteurs sont disponibles avec une grande finesse temporelle (par heure), permettant d’étudier la dynamique temporelle journalière au sein de l'espace protégé. Cela peut par exemple nous renseigner sur les heures de moindre dérangement de la biodiversité, même s’il faut noter que des dérangements peuvent perdurer au-delà de ces horaires (par exemple par des activités de bivouac qui ne sont pas enregistrées par les éco-compteurs). 
+
+Le premier graphique de cette section présente les données d'écocompteurs moyennées sur les différentes années, par mois, heure de la journée, et compteur. Ce graphique n'est pas présenté pour les espaces protégés n'ayant pas d'éco-compteurs, ou ayant fourni des données d'éco-compteurs sans les horaires d'observation.
+
+Le second graphique de cette section présente les données d'éco-compteurs moyennées sur les différentes années et par semaine. Il permet de voir l'évolution de la saisonnalité des données des eco-compteurs (et dans certains cas des données aberrantes). Attention, l'échelle verticale est transformée en racine carrée pour que les valeurs moins élevées soient tout de même visibles sur le graphique.
+
+
