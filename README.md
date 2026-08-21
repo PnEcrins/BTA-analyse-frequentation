@@ -4,7 +4,9 @@ Scripts R de caractérisation standardisée comparative de la fréquentation d'e
 
 Ils permettent de faire une analyse et une synthèse (sous forme de page web HTML) de la fréquentation dans un ou plusieurs espaces protégés, à partir de différentes sources de données (éco-compteurs, Outdoorvision, Strava, iNaturalist, itinéraires de randonnées).
 
-Exemple du résultat sur les 13 espaces protégés du projet européen BiodivTourAlps (BTA) : https://pnecrins.github.io/BTA-analyse-frequentation/2_Outputs/Rapports_parcs/Rapport_parc_PNEcrins_V6.html
+Exemple du résultat sur les 13 espaces protégés du projet européen BiodivTourAlps (BTA) : https://pnecrins.github.io/BTA-analyse-frequentation/2_Outputs/Rapports_parcs/.
+
+Présentation de l'analyse : https://geotrek.ecrins-parcnational.fr/rencontres/2026/presentations/12b-Geotrek-BTA-Frequentation.pdf
 
 ## Comment utiliser les scripts pour un nouvel espace protégé ?
 
@@ -54,8 +56,14 @@ Le contenu de ce dossier est créé automatiquement par les scripts de l’analy
 - Outputs_spatiaux : contient les résultats de la cartographie de fréquentation standardisée au format .tif pour le raster de 500x500m et au format .gpkg pour les sentiers de randonnée. Ces produits ont été fournis aux parcs pour pouvoir être réutilisés.
 - Rapports_parcs : contient les rapports finaux compilés par à la fin du script `00_Script_control_BTA_interparc.R`
 
+## Etude spécifique PNE
+
+En complément, une étude plus spécifique sur le Parc national des Écrins a été réalisée, dont les scripts sont aussi fournis dans le dossier [/Analyse_specifique_PNE](Analyse_specifique_PNE).
+
+Résultat simplifié consultable sur https://pnecrins.github.io/BTA-analyse-frequentation/Analyse_specifique_PNE/2.Outputs/Carte_interactive_frequentation_PNE_SIMPLIFIEE.html
+
 ------------------------------------------------
 
-Cet outil a été piloté par le Parc national des Écrins et financé dans le cadre du projet BiodivTourAlps ALCOTRA n°20140.
+Cet outil a été piloté par le Parc national des Écrins et financé dans le cadre du projet européen BiodivTourAlps ALCOTRA n°20140.
 
 <img width="1515" height="330" alt="BiodivTourAlps_logo_def" src="https://github.com/user-attachments/assets/ffaed87f-e11a-4a5e-a286-c9b002b61f51" />
