@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analyse de la Fréquentation - Espaces Protégés</title>
+    <style>
+        :root {
+            --primary: #0d9488;
+            --primary-dark: #115e59;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 24px;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: linear-gradient(135deg, #1e3a8a 0%, var(--primary) 100%);
+            color: white;
+            padding: 28px 32px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            margin: 0 0 8px 0;
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        header p {
+            margin: 0;
+            opacity: 0.9;
+            font-size: 1rem;
+        }
+
+        .intro-box {
+            background-color: var(--card-bg);
+            border-left: 4px solid var(--primary);
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin-bottom: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            color: #334155;
+        }
+
+        .main-repo-link {
+            display: inline-block;
+            margin-top: 8px;
+            color: #2563eb;
+            font-weight: 600;
+            word-break: break-all;
+        }
+
+        .table-container {
+            background: var(--card-bg);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            margin-bottom: 28px;
+            border: 1px solid var(--border-color);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f1f5f9;
+            color: #475569;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.95rem;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background-color: #f8fafc;
+        }
+
+        .park-num {
+            font-weight: bold;
+            color: var(--primary);
+            width: 40px;
+            text-align: center;
+        }
+
+        .park-name {
+            font-weight: 600;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-pn { background-color: #e0f2fe; color: #0369a1; }
+        .badge-pnr { background-color: #dcfce7; color: #15803d; }
+        .badge-rn { background-color: #fef3c7; color: #b45309; }
+
+        .park-link {
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .park-link:hover {
+            text-decoration: underline;
+        }
+
+        .funding-card {
+            background: var(--card-bg);
+            border-radius: 10px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            border: 1px solid var(--border-color);
+            text-align: center;
+        }
+
+        .funding-card h2 {
+            font-size: 1rem;
+            color: var(--text-muted);
+            margin-top: 0;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .funding-img {
+            max-width: 100%;
+            height: auto;
+            max-height: 120px;
+            display: block;
+            margin: 0 auto;
+        }
+
+        footer {
+            margin-top: 32px;
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Analyse de la Fréquentation des Espaces Protégés</h1>
+            <p>Projet BiodivTourAlps — Rapports d'analyse par territoire</p>
+        </header>
+
+        <div class="intro-box">
+            <strong>Dépôt principal du projet :</strong><br>
+            <a class="main-repo-link" href="https://github.com/PnEcrins/BTA-analyse-frequentation/" target="_blank" rel="noopener">
+                https://github.com/PnEcrins/BTA-analyse-frequentation/
+            </a>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="text-align:center;">#</th>
+                        <th>Espace Protégé</th>
+                        <th>Lien / Page HTML d'Analyse</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="park-num">1</td>
+                        <td class="park-name">Parc Alpi Cozie</td>
+                        <td><a class="park-link" href="https://pnecrins.github.io/BTA-analyse-frequentation/2_Outputs/Rapports_parcs/Rapport_parc_Alpi_Cozie_V6.html" target="_blank" rel="noopener">Consulter l'analyse Alpi Cozie</a></td>
+                    </tr>
+                    <tr>
+                        <td class="park-num">2</td>
+                        <td class="park-name">Parc Alpi Marittime</td>
+                        <td><a class="park-link" href="https://pnecrins.github.io/BTA-analyse-frequentation/2_Outputs/Rapports_parcs/Rapport_parc_Alpi_Marittime_V6.html" target="_blank" rel="noopener">Consulter l'analyse Alpi Marittime</a></td>
+                    </tr>
+                    <tr>
+                        <td class="park-num">3</td>
+                        <td class="park-name">Parc Gran Paradiso</td>
+                        <td><a class="park-link" href="https://pnecrins.github.io/BTA-analyse-frequentation/2_Outputs/Rapports_parcs/Rapport_parc_Gran_Paradiso_V6.html" target="_blank" rel="noopener">Consulter l'analyse Gran Paradiso</a></td>
+                    </tr>
+                    <tr>
+                        <td class="park-num">4</td>
+                        <td class="park-name">Parc Mont Avic</td>
+                        <td><a class="park-link" href="https://pnecrins.github.io/BTA-analyse-frequentation/2_Outputs/Rapports_parcs/Rapport_parc_Mont-Avic_V6.html" target="_blank" rel="noopener">Consulter l'analyse Mont Avic</a></td>
+                    </tr>
+                    <tr>
+                        <td class="park-num">5</td>
+                        <td class="park-name">Parc Ossola</td>
+                        <td><a class="park-link" href="https://pnecrins.github.io/BTA-analyse-frequentation/2_Outputs/Rapports_parcs/Rapport_parc_Ossola_V6.html" target="_blank" rel="noopener">Consulter l'analyse Ossola</a></td>
+                    </tr>
+                    <tr>
+                        <td class="park-num">6</td>
+                        <td class="park-name">Parc national des Écrins</td>
+                        <td><a class="park-link" href="https://pnecrins.github.io/BTA-analyse-frequentation/2_Outputs/Rapports_parcs/Rapport_parc_PNEcrins_V6.html" target="_blank" rel="noopener">Consulter l'analyse sÉcrins</a></td>
+                    </tr>
+                    <tr>
+                        <td class="park-num">7</td>
+                        <td class="park-name">Parc National du Mercantour</td>
+                        <td><a class="park-link" href="https://pnecrins.github.io/BTA-analyse-frequentation/2_Outputs/Rapports_parcs/Rapport_parc_PNMercantour_V6.html" target="_blank" rel="noopener">Consulter l'analyse Mercantour</a></td>
+                    </tr>
+                    <tr>
+                        <td class="park-num">8</td>
+                        <td class="park-name">Parc Naturel Régional du Massif des Bauges</td>
+                        <td><a class="park-link" href="https://pnecrins.github.io/BTA-analyse-frequentation/2_Outputs/Rapports_parcs/Rapport_parc_PNRBauges_V6.html" target="_blank" rel="noopener">Consulter l'analyse Massif dess Bauges</a></td>
+                    </tr>
+                    <tr>
+                        <td class="park-num">9</td>
+                        <td class="park-name">Parc Naturel Régional de Chartreuse</td>
+                        <td><a class="park-link" href="https://pnecrins.github.io/BTA-analyse-frequentation/2_Outputs/Rapports_parcs/Rapport_parc_PNRChartreuse_V6.html" target="_blank" rel="noopener">Consulter l'analyse Chartreuse</a></td>
+                    </tr>
+                    <tr>
+                        <td class="park-num">10</td>
+                        <td class="park-name">Parc Naturel Régional du Queyras</td>
+                        <td><a class="park-link" href="https://pnecrins.github.io/BTA-analyse-frequentation/2_Outputs/Rapports_parcs/Rapport_parc_PNRQueyras_V6.html" target="_blank" rel="noopener">Consulter l'analyse Queyras</a></td>
+                    </tr>
+                    <tr>
+                        <td class="park-num">11</td>
+                        <td class="park-name">Parc Naturel Régional du Vercors</td>
+                        <td><a class="park-link" href="https://pnecrins.github.io/BTA-analyse-frequentation/2_Outputs/Rapports_parcs/Rapport_parc_PNRVercors_V6.html" target="_blank" rel="noopener">Consulter l'analyse Vercors</a></td>
+                    </tr>
+                    <tr>
+                        <td class="park-num">12</td>
+                        <td class="park-name">Parc National de la Vanoise</td>
+                        <td><a class="park-link" href="https://pnecrins.github.io/BTA-analyse-frequentation/2_Outputs/Rapports_parcs/Rapport_parc_PNVanoise_V6.html" target="_blank" rel="noopener">Consulter l'analyse Vanoise</a></td>
+                    </tr>
+                    <tr>
+                        <td class="park-num">13</td>
+                        <td class="park-name">Réserves Naturelles de Haute-Savoie (Asters)</td>
+                        <td><a class="park-link" href="https://pnecrins.github.io/BTA-analyse-frequentation/2_Outputs/Rapports_parcs/Rapport_parc_RNAsters_V6.html" target="_blank" rel="noopener">Consulter l'analyse Haute-Savoie</a></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="funding-card">
+            <h2>Financeurs et Partenaires du Programme</h2>
+            <img class="funding-img" src="https://private-user-images.githubusercontent.com/4418840/639435317-ffaed87f-e11a-4a5e-a286-c9b002b61f51.png?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3ODczMTYxNTYsIm5iZiI6MTc4NzMxNTg1NiwicGF0aCI6Ii80NDE4ODQwLzYzOTQzNTMxNy1mZmFlZDg3Zi1lMTFhLTRhNWUtYTI4Ni1jOWIwMDJiNjFmNTEucG5nP1gtQW16LUFsZ29yaXRobT1BV1M0LUhNQUMtU0hBMjU2JlgtQW16LUNyZWRlbnRpYWw9QUtJQVZDT0RZTFNBNTNQUUs0WkElMkYyMDI2MDgyMSUyRnVzLWVhc3QtMSUyRnMzJTJGYXdzNF9yZXF1ZXN0JlgtQW16LURhdGU9MjAyNjA4MjFUMTIzNzM2WiZYLUFtei1FeHBpcmVzPTMwMCZYLUFtei1TaWduYXR1cmU9MjFiMzQ5YTM3ODQ2YzcxZTFiODlhNzVkOTY5NGYzZThmOTczNjE5Yzc5NGM2MGRmN2JjZTQwNTRmYWZiNjRjMCZYLUFtei1TaWduZWRIZWFkZXJzPWhvc3QmcmVzcG9uc2UtY29udGVudC10eXBlPWltYWdlJTJGcG5nIn0.b8LhoZs4x0fPpDRf49EvWXvBJ8W09R1zYX1xfSt8NsY" alt="Financeurs du programme d'analyse de fréquentation">
+        </div>
+
+        <footer>
+            Projet BiodivTourAlps — Analyse de fréquentation dans les espaces protégés
+        </footer>
+    </div>
+
+</body>
+</html>
