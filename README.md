@@ -10,7 +10,7 @@ Ils permettent de faire une analyse et une synthèse (sous forme de page web HTM
 
 - Résultat de l'analyse sur les 13 espaces protégés du projet européen BiodivTourAlps (BTA) : https://pnecrins.github.io/BTA-analyse-frequentation/2_Outputs/Rapports_parcs/.
 - Vidéo de présentation de l'analyse (7:20 à 39:15) lors du webinaire "Traitement, valorisation des données de fréquentation" (juin 2026) : https://www.youtube.com/watch?v=TvIgBTEjX6Q
-- Support de présentation de l'analyse : https://geotrek.ecrins-parcnational.fr/rencontres/2026/presentations/12b-Geotrek-BTA-Frequentation.pdf
+- Support de présentation de l'analyse : https://data.ecrins-parcnational.fr/documents/technique/2026-06-Presentation-Analyse-frequentation-13-espaces-proteges-BiodivTourAlps-Conservara.pdf
 - Rapport d'analyse des données de fréquentation du Parc national des Écrins : https://data.ecrins-parcnational.fr/documents/technique/2025-12-Rapport-Analyse-donnees-frequentation-BiodivTourAlps-Conservara.pdf
 
 ## Comment utiliser les scripts pour un nouvel espace protégé ?
