@@ -4,6 +4,8 @@ Scripts R de caractérisation standardisée comparative de la fréquentation d'e
 
 Ils permettent de faire une analyse et une synthèse (sous forme de page web HTML) de la fréquentation dans un ou plusieurs espaces protégés, à partir de différentes sources de données (éco-compteurs, Outdoorvision, Strava, iNaturalist, itinéraires de randonnées).
 
+<img width="865" height="931" alt="image" src="https://github.com/user-attachments/assets/c02d730a-7f28-4b58-ba3a-f33e69fdb97f" />
+
 ## Ressources
 
 - Résultat de l'analyse sur les 13 espaces protégés du projet européen BiodivTourAlps (BTA) : https://pnecrins.github.io/BTA-analyse-frequentation/2_Outputs/Rapports_parcs/.
@@ -17,15 +19,15 @@ Ce script a été développé dans l’objectif précis d'analyser sur les 13 pa
 
 Pour lancer une analyse sur un nouveau territoire, il faudra s’assurer d’avoir les données suffisantes et de les placer dans les dossiers correspondants dans le dossier "0_Data" :
 
-- les données Strava obtenues par Strava Métro (obligatoires)
-- les limites géographiques de l’espace protégé (obligatoires)
-- les données éco-compteurs (fortement recommandées ; l’analyse peut fonctionner sans éco-compteur pour votre espace protégé, en fixant le paramètre `Run_EcoTempo` à `F`, mais il est nécessaire alors d’avoir les données des autres sites protégés pour que la corrélation entre éco-compteur et les données Strava / Outdoorvision / iNaturalist puisse être calculée).
-- les données Outdoorvision (facultatives ; adapter le paramètre `Run_Outdoor` pour choisir si l’analyse doit inclure ces données ou non)
-- les données Sentiers (facultatives ; adapter le paramètre `Run_Sentiers` pour choisir si l’analyse doit inclure ces données ou non).
+- Les données Strava obtenues par Strava Métro (obligatoires).
+- Les limites géographiques de l’espace protégé (obligatoires).
+- Les données éco-compteurs (fortement recommandées ; l’analyse peut fonctionner sans éco-compteur pour votre espace protégé, en fixant le paramètre `Run_EcoTempo` à `F`, mais il est nécessaire alors d’avoir les données des autres sites protégés pour que la corrélation entre éco-compteur et les données Strava / Outdoorvision / iNaturalist puisse être calculée).
+- Les données Outdoorvision (facultatives ; adapter le paramètre `Run_Outdoor` pour choisir si l’analyse doit inclure ces données ou non).
+- Les données Sentiers (facultatives ; adapter le paramètre `Run_Sentiers` pour choisir si l’analyse doit inclure ces données ou non).
 
 Il faudra ensuite modifier l’object `parclist` du script principal, ainsi que les chemins d’accès dans les différentes fonctions du code pour s’assurer que chaque fichier puisse être chargé (par exemple dans la fonction `BTA_ChargerStrava` pour les données Strava). Il faudra pour cela avoir vérifié que le format des données correspond bien aux données utilisées dans cette analyse (voir section "0_Data" de ce document).
 
-Le script qui crée le rapport automatisé est pensé pour analyser plusieurs parcs et les comparer. Si vous souhaitez créer un rendu similaire pour un seul espace protégé, il vous faudra alors adapter le script pour enlever toute la partie comparative des scripts d’analyses, mais également des fichiers .rmd qui codent le rapport. 
+Le script qui crée le rapport automatisé est pensé pour analyser plusieurs parcs et les comparer. Si vous souhaitez créer un rendu similaire pour un seul espace protégé, il vous faudra alors adapter le script pour enlever toute la partie comparative des scripts d’analyses, mais également des fichiers `.rmd` qui codent le rapport. 
 
 Questions à adresser à [https://conservara.fr/](conservara.fr).
 
@@ -58,17 +60,19 @@ Le contenu de ce dossier est créé automatiquement par les scripts de l’analy
 - "0.iNaturalist_ready" : données iNaturalist téléchargées et formatées dans le script `01.Script_Prepare_Data.R` (si le paramètre `Run_Download_iNat` est fixé à `T` dans le script principal)
 - "0.Strava_ready" : données Strava formatées par la fonction `BTA_PrepareStrava()` si le paramètre `Run_Prepare_Strava` est fixé à `T` dans le script principal.
 - "1.Compiled_data" & "2.Analysed_data" : des fichiers sont sauvegardés aux étapes de l’analyse, elles sont stockées dans ce dossier.
-- "Outputs_spatiaux" : contient les résultats de la cartographie de fréquentation standardisée au format .tif pour le raster de 500x500m et au format .gpkg pour les sentiers de randonnée. Ces produits ont été fournis aux parcs pour pouvoir être réutilisés.
+- "Outputs_spatiaux" : contient les résultats de la cartographie de fréquentation standardisée au format `.tif` pour le raster de 500x500m et au format `.gpkg` pour les sentiers de randonnée. Ces produits ont été fournis aux parcs pour pouvoir être réutilisés.
 - "Rapports_parcs" : contient les rapports finaux compilés par à la fin du script `00_Script_control_BTA_interparc.R`
 
 ## Etude spécifique PNE
 
 En complément, une étude plus spécifique a été réalisée sur le Parc national des Écrins, dont les scripts sont aussi fournis dans le dossier [/Analyse_specifique_PNE](Analyse_specifique_PNE).
 
-Résultat simplifié consultable sur https://pnecrins.github.io/BTA-analyse-frequentation/Analyse_specifique_PNE/2.Outputs/Carte_interactive_frequentation_PNE_SIMPLIFIEE.html
+Résultat simplifié consultable sur https://pnecrins.github.io/BTA-analyse-frequentation/Analyse_specifique_PNE/2.Outputs/Carte_interactive_frequentation_PNE_SIMPLIFIEE.html.
+
+<img width="913" height="800" alt="image" src="https://github.com/user-attachments/assets/5a963d52-ec55-4404-baa5-446a6c1f7180" />
 
 ------------------------------------------------
 
-Cet outil a été piloté par le Parc national des Écrins et financé dans le cadre du projet européen BiodivTourAlps ALCOTRA n°20140.
+Cet outil a été piloté par le [Parc national des Écrins](https://www.ecrins-parcnational.fr) et financé dans le cadre du projet européen [BiodivTourAlps ALCOTRA n°20140](https://interreg-alcotra.eu/fr/biodivtouralps).
 
 <img width="1515" height="330" alt="BiodivTourAlps_logo_def" src="https://github.com/user-attachments/assets/ffaed87f-e11a-4a5e-a286-c9b002b61f51" />
