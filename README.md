@@ -6,6 +6,8 @@ Ils permettent de faire une analyse et une synthèse (sous forme de page web HTM
 
 <img width="865" height="931" alt="image" src="https://github.com/user-attachments/assets/c02d730a-7f28-4b58-ba3a-f33e69fdb97f" />
 
+Développé par @victorcazalis de [Conservara](https://conservara.fr/) sous licence libre AGPL-3.0.
+
 ## Ressources
 
 - Résultat de l'analyse sur les 13 espaces protégés du projet européen BiodivTourAlps (BTA) : https://pnecrins.github.io/BTA-analyse-frequentation/2_Outputs/Rapports_parcs/.
